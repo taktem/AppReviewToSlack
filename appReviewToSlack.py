@@ -1,5 +1,6 @@
 # coding:utf-8
 
+import sys
 import requests
 import xml.etree.ElementTree as etree
 from datetime import datetime, timedelta
@@ -39,3 +40,16 @@ def postToSlack(slack_url, app_id, date_scope_range):
 
     slack = postSlack.PostSlack(slack_url = slack_url)
     slack.post(attachments)
+
+def main():
+    argvs = sys.argv
+    argc = len(argvs)
+
+    if argc < 4:
+        return
+
+    print argvs
+    postToSlack(slack_url = argvs[1], app_id = argvs[2], date_scope_range = int(argvs[3]))
+
+if __name__ == '__main__':
+  main()
