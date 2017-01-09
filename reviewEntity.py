@@ -13,8 +13,7 @@ class ReviewEntity:
         self.content = entry.find('.//{http://www.w3.org/2005/Atom}content').text.encode('utf-8')
         self.rating = int(entry.find('.//{http://itunes.apple.com/rss}rating').text)
 
-    # AppReviewを、Slack投稿フォーマットへ変換
-    def toSlackAttachment(self):
+    def convertToSlackAttachment(self):
         star = ''
         for index in range(self.rating):
             star = star + ':star:'

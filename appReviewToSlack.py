@@ -9,9 +9,9 @@ import reviewEntity
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
-def postToSlack(slack_url, app_id):
+def postToSlack(slack_url, app_id, date_scope_range):
 
-    # アプリ評価xml取得
+    # Create App review URL
     apple_url = APPLE_URL + app_id + '/xml'
 
     response = requests.get(url=apple_url).text.encode('utf-8')
@@ -19,10 +19,10 @@ def postToSlack(slack_url, app_id):
 
     entries = root.findall('.//{http://www.w3.org/2005/Atom}entry')
 
-    # 評価取得基準日
-    scope_date = dateUtil.scope_start_date(range = 1)
+    # Create reference range
+    scope_date = dateUtil.scope_start_date(range = date_scope_range)
 
-    # 評価毎に処理開始
+    # Post all reviews
     attachments = []
     for entry in entries[1:]:
         entity = reviewEntity.ReviewEntity(entry)
@@ -30,8 +30,12 @@ def postToSlack(slack_url, app_id):
             print 'Out of date'
             continue
 
-        attachment = entity.toSlackAttachment()
+        attachment = entity.convertToSlackAttachment()
         attachments.append(attachment)
+
+    if attachments.count == 0:
+        print 'post data is empty'
+        return
 
     slack = postSlack.PostSlack(slack_url = slack_url)
     slack.post(attachments)
