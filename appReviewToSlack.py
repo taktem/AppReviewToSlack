@@ -25,6 +25,9 @@ def postToSlack(slack_url, app_id, date_scope_range):
 
     # Post all reviews
     attachments = []
+
+    app_name = entries[0].find('.//{http://itunes.apple.com/rss}name').text
+
     for entry in entries[1:]:
         entity = reviewEntity.ReviewEntity(entry)
         if entity.update_date < scope_date:
@@ -38,7 +41,7 @@ def postToSlack(slack_url, app_id, date_scope_range):
         print 'post data is empty'
         return
 
-    slack = postSlack.PostSlack(slack_url = slack_url)
+    slack = postSlack.PostSlack(slack_url = slack_url, name = app_name)
     slack.post(attachments)
 
 def main():
@@ -46,6 +49,7 @@ def main():
     argc = len(argvs)
 
     if argc < 4:
+        print 'required parameter = slack_url, app_id, date_scope_range'
         return
 
     print argvs
