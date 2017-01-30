@@ -6,8 +6,8 @@ sys.path.append('.')
 import requests
 import dateUtil
 import postSlack
-import reviewEntity
 import xmltodict
+import reviewEntity
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
