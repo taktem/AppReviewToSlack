@@ -5,13 +5,13 @@ import dateUtil
 
 class ReviewEntity:
     def __init__(self, entry):
-        update_date_string = entry[u'updated']
+        update_date_string = entry.find('.//{http://www.w3.org/2005/Atom}updated').text.encode('utf-8')
         self.update_date = dateUtil.stringToLocalDateTimeWithISO8601(update_date_string)
-        self.author_name = entry[u'author'][u'name']
-        self.version = entry[u'im:version']
-        self.title = entry[u'title']
-        self.content = entry[u'content']
-        self.rating = int(entry[u'im:rating'])
+        self.author_name = entry.find('.//{http://www.w3.org/2005/Atom}author').find('.//{http://www.w3.org/2005/Atom}name').text.encode('utf-8')
+        self.version = entry.find('.//{http://itunes.apple.com/rss}version').text.encode('utf-8')
+        self.title = entry.find('.//{http://www.w3.org/2005/Atom}title').text.encode('utf-8')
+        self.content = entry.find('.//{http://www.w3.org/2005/Atom}content').text.encode('utf-8')
+        self.rating = int(entry.find('.//{http://itunes.apple.com/rss}rating').text)
 
     def convertToSlackAttachment(self):
         star = ''

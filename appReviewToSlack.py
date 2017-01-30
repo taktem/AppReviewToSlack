@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import sys
-sys.path.append('.')
-
 import requests
+import xml.etree.ElementTree as etree
+from datetime import datetime, timedelta
 import dateUtil
 import postSlack
-import xmltodict
 import reviewEntity
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
 def postToSlack(slack_url, app_id, date_scope_range):
-
     # Create App review URL
     apple_url = APPLE_URL + app_id + '/xml'
 
@@ -20,7 +18,9 @@ def postToSlack(slack_url, app_id, date_scope_range):
     response.encoding = 'utf-8'
 
     xml_string = response.text.encode('utf-8')
-    entries = xmltodict.parse(xml_string)[u'feed'][u'entry']
+    root = etree.fromstring(xml_string)
+
+    entries = root.findall('.//{http://www.w3.org/2005/Atom}entry')
 
     if len(entries) == 0:
         print 'Review is empty'
@@ -32,7 +32,7 @@ def postToSlack(slack_url, app_id, date_scope_range):
     # Post all reviews
     attachments = []
 
-    app_name = entries[0][u'im:name']
+    app_name = entries[0].find('.//{http://itunes.apple.com/rss}name').text.encode('utf-8')
 
     for entry in entries[1:]:
         entity = reviewEntity.ReviewEntity(entry)
