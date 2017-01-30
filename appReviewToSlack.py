@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import sys
+sys.path.append('.')
+
 import requests
 import dateUtil
 import postSlack
 import reviewEntity
 import xmltodict
-import sys
-sys.path.append('.')
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
