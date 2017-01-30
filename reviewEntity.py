@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import xmltodict
+import xml.etree.ElementTree as etree
 import dateUtil
 
 class ReviewEntity:
