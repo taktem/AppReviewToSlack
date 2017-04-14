@@ -54,7 +54,7 @@ def main():
     argvs = sys.argv
     argc = len(argvs)
 
-    if argc < 4:
+    if argc < 5:
         print 'required parameter = slack_url, app_id, date_scope_range'
         return
 
@@ -63,4 +63,3 @@ def main():
 
 if __name__ == '__main__':
   main()
- 
