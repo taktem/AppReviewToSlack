@@ -63,5 +63,4 @@ def main():
 
 if __name__ == '__main__':
   main()
-
-postToSlack('https://hooks.slack.com/services/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', '965626396', 5, '#times_taktem')
+ 
