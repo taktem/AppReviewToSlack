@@ -59,7 +59,7 @@ def main():
         return
 
     print argvs
-    postToSlack(slack_url = argvs[1], app_id = argvs[2], date_scope_range = int(argvs[3]))
+    postToSlack(slack_url = argvs[1], app_id = argvs[2], date_scope_range = int(argvs[3]), channel_name = argvs[4])
 
 if __name__ == '__main__':
   main()
