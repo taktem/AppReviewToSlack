@@ -10,7 +10,7 @@ import reviewEntity
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
-def postToSlack(slack_url, app_id, date_scope_range):
+def postToSlack(slack_url, app_id, date_scope_range, channel_name):
     # Create App review URL
     apple_url = APPLE_URL + app_id + '/xml'
 
@@ -47,7 +47,7 @@ def postToSlack(slack_url, app_id, date_scope_range):
         print 'post data is empty'
         return
 
-    slack = postSlack.PostSlack(slack_url = slack_url, name = app_name)
+    slack = postSlack.PostSlack(slack_url = slack_url, name = app_name, channel_name = channel_name)
     slack.post(attachments)
 
 def main():
@@ -63,3 +63,5 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+postToSlack('https://hooks.slack.com/services/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', '965626396', 5, '#times_taktem')
