@@ -4,9 +4,9 @@ import sys
 import requests
 import xml.etree.ElementTree as etree
 from datetime import datetime, timedelta
-from . import dateUtil
-from . import postSlack
-from . import reviewEntity
+import dateUtil
+import postSlack
+import reviewEntity
 
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 
@@ -23,7 +23,7 @@ def postToSlack(slack_url, app_id, date_scope_range, channel_name):
     entries = root.findall('.//{http://www.w3.org/2005/Atom}entry')
 
     if len(entries) == 0:
-        print('Review is empty')
+        print 'Review is empty'
         return
 
     # Create reference range
@@ -37,14 +37,14 @@ def postToSlack(slack_url, app_id, date_scope_range, channel_name):
     for entry in entries[1:]:
         entity = reviewEntity.ReviewEntity(entry)
         if entity.update_date < scope_date:
-            print('Out of date')
+            print 'Out of date'
             continue
 
         attachment = entity.convertToSlackAttachment()
         attachments.append(attachment)
 
     if attachments.count == 0:
-        print('post data is empty')
+        print 'post data is empty'
         return
 
     slack = postSlack.PostSlack(slack_url = slack_url, name = app_name, channel_name = channel_name)
@@ -55,10 +55,10 @@ def main():
     argc = len(argvs)
 
     if argc < 5:
-        print('required parameter = slack_url, app_id, date_scope_range')
+        print 'required parameter = slack_url, app_id, date_scope_range'
         return
 
-    print(argvs)
+    print argvs
     postToSlack(slack_url = argvs[1], app_id = argvs[2], date_scope_range = int(argvs[3]), channel_name = argvs[4])
 
 if __name__ == '__main__':

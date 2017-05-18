@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as etree
-from . import dateUtil
+import dateUtil
 
 class ReviewEntity:
     def __init__(self, entry):
