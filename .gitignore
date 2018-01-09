@@ -1,0 +1,7 @@
+## DSStore
+.DS_Store
+
+## Library
+src/lib
+app.zip
+test.py

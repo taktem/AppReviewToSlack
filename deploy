@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm -f app.zip
+cd src
+zip -r app.zip * -x '*.DS_Store'
+mv app.zip ../app.zip
+cd ../
