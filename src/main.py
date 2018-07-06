@@ -8,7 +8,8 @@ import boto3
 import json
 import requests
 import xml.etree.ElementTree as etree
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import dateutil.parser
 
 s3Resource = boto3.resource('s3')
 s3Client = boto3.client('s3')
@@ -16,22 +17,15 @@ s3Client = boto3.client('s3')
 APPLE_URL = 'https://itunes.apple.com/jp/rss/customerreviews/id='
 bucket_name = 'BUCKET_NAME'
 
-def stringToLocalDateTimeWithISO8601(date_string):
-    result =  datetime.strptime(date_string[0:19].decode('ascii'), '%Y-%m-%dT%H:%M:%S')
-    adjustTime = timedelta(hours=int(date_string[20:22]),minutes=int(date_string[23:]))
-
-    if date_string[19] == '+':
-        result += adjustTime
-    elif date_string[19] == '-':
-        result -= adjustTime
-
-    return result
-
 def scope_start_date(range):
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     return today - timedelta(days=range)
 
 def putToS3(key='', body=''):
+    if not os.environ.get(bucket_name):
+        print('S3 Bucket name is not set')
+        return
+
     bucket = s3Resource.Bucket(os.environ[bucket_name])
 
     if None in [key, body]:
@@ -81,7 +75,7 @@ class PostSlack:
 class ReviewEntity:
     def __init__(self, entry):
         update_date_string = entry.find('.//{http://www.w3.org/2005/Atom}updated').text.encode('utf-8')
-        self.update_date = stringToLocalDateTimeWithISO8601(update_date_string)
+        self.update_date = dateutil.parser.parse(update_date_string)
         self.author_name = entry.find('.//{http://www.w3.org/2005/Atom}author').find('.//{http://www.w3.org/2005/Atom}name').text.encode('utf-8')
         self.version = entry.find('.//{http://itunes.apple.com/rss}version').text.encode('utf-8')
         self.title = entry.find('.//{http://www.w3.org/2005/Atom}title').text.encode('utf-8')
@@ -103,6 +97,8 @@ class ReviewEntity:
         for index in range(self.rating):
             star = star + ':star:'
 
+        dif = int(self.update_date.strftime("%Z %z")) / 100
+        jstDateString = self.update_date + timedelta(hours=dif)
         attachment = {
             'color': '#E84985',
             'author_name': self.author_name.decode('utf-8'),
@@ -111,7 +107,7 @@ class ReviewEntity:
             'fields': [
                 {
                     'title': 'Post date',
-                    'value': self.update_date.strftime('%Y/%m/%d %H:%M')
+                    'value': jstDateString.strftime('%Y/%m/%d %H:%M')
                 },
                 {
                     'title': 'Rating',
@@ -143,7 +139,7 @@ def lambda_handler(event, context):
     channelName = getDictValue(dict = event['queryStringParameters'], key = 'channel_name')
 
     print('Request resource {\n    slack_url: ' + slackUrl + '\n    app_id: ' + appId + '\n    date_scope_range: ' + str(dateScopeRange) + '\n    channel_name: ' + channelName + '\n}')
-    apple_url = APPLE_URL + appId + '/xml'
+    apple_url = APPLE_URL + appId + '/sortBy=mostRecent/xml'
 
     response = requests.get(url=apple_url)
     response.encoding = 'utf-8'
