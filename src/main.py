@@ -98,7 +98,7 @@ class ReviewEntity:
             star = star + ':star:'
 
         dif = int(self.update_date.strftime("%Z %z")) / 100
-        jstDateString = self.update_date + timedelta(hours=dif)
+        jstDateString = self.update_date - timedelta(hours=dif) + timedelta(hours=9)
         attachment = {
             'color': '#E84985',
             'author_name': self.author_name.decode('utf-8'),
