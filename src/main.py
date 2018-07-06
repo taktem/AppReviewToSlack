@@ -84,7 +84,7 @@ class ReviewEntity:
 
     def convertToTSVRow(self):
         return ('\t').join([
-            datetime.strftime(self.update_date, '%Y-%m-%dT%H:%M:%S'),
+            datetime.strftime(self.update_date, '%Y-%m-%dT%H:%M:%S %z'),
             self.author_name.decode('utf-8'),
             self.version.decode('utf-8'),
             self.title.decode('utf-8'),
