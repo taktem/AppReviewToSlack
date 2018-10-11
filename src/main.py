@@ -160,7 +160,9 @@ def lambda_handler(event, context):
     attachments = []
     tsvRows = []
 
-    app_name = entries[0].find('.//{http://itunes.apple.com/rss}name').text
+    # アプリ名が取得できなくなっていたのでコメントアウト
+    # app_name = entries[0].find('.//{http://itunes.apple.com/rss}name').text
+    app_name = 'App Review'
 
     for entry in entries[1:]:
         entity = ReviewEntity(entry)
